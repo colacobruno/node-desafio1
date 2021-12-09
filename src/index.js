@@ -49,14 +49,16 @@ app.post('/users', (request, response) => {
     })
   }
 
-  users.push({
+  const user = {
     name,
     username,
     id: uuidv4(),
     todos: []
-  });
+  }
 
-  return response.status(201).json(users);
+  users.push(user);
+
+  return response.status(201).json(user);
 });
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
@@ -77,15 +79,17 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
     deadline
   } = request.body;
 
-  user.todos.push({
+  const todo = {
     id: uuidv4(),
     title,
     done: false,
     deadline: new Date(deadline),
     created_at: new Date()
-  })
+  }
 
-  return response.status(201).json(user.todos);
+  user.todos.push(todo)
+
+  return response.status(201).json(todo);
 
 });
 
@@ -149,15 +153,15 @@ app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
     id
   } = request.params;
 
-  const todoIndex = user.todos.findIndex((todo) => todo.id === id) // retorna a posição do array
+  const todo = user.todos.find((todo) => todo.id === id) // retorna a posição do array
 
-  if (!todoIndex === -1) {
+  if (!todo) {
     return response.status(404).json({
       error: "Tarefa não encontrada"
     });
   }
 
-  user.todos.splice(todoIndex, 1);
+  user.todos.splice(todo);
 
   return response.status(204).json();
 
